@@ -1,5 +1,10 @@
 # re-plants-vs-zombies fork
 
+i am too lazy to explain all of this
+just build with "build ps2.bat" it has all the dependencies (windows)!! on linux you will need to edit the cmake config!!
+
+a main.pak with compressed assets its recommended to avoid slow loading and crashing!
+
 Fork of Patoke's PVZ GOTY decompilation with the following objectives:
 - [x] Replace renderer with SDL + OpenGL
 - [x] Replace Windows code with cross-platform code
