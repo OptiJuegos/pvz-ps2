@@ -1,0 +1,13 @@
+prefix=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports
+exec_prefix=${prefix}
+libdir=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/lib
+includedir=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/include
+
+Name: libxmp
+Description: Xmp module player library
+Version: 4.6.3
+
+Requires:
+Libs: -L${libdir} -lxmp
+Cflags: -I${includedir}
+Libs.private: 

@@ -1,0 +1,10 @@
+prefix=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: SheenBidi
+Description: SheenBidi is a lightweight, fast and stable implementation of the Unicode Bidirectional Algorithm.
+URL: https://github.com/Tehreer/SheenBidi
+Version: 3.0.0
+Libs: -L${libdir} -lSheenBidi
+Cflags: -I${includedir}

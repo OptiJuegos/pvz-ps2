@@ -1,0 +1,11 @@
+prefix=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: imagequant
+Description: Small, portable C library for high-quality conversion of RGBA images to 8-bit indexed-color (palette) images.
+URL: https://pngquant.org/lib/
+Version: 2.17.1
+
+Libs: -L${libdir} -limagequant
+Cflags: -I${includedir}

@@ -1,0 +1,16 @@
+# Opus codec reference implementation pkg-config file
+
+prefix=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports
+exec_prefix=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports
+libdir=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/lib
+includedir=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/include
+
+Name: Opus
+Description: Opus IETF audio codec ( build)
+URL: https://opus-codec.org/
+Version: 0
+Requires:
+Conflicts:
+Libs: -LD:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/lib -lopus
+Libs.private: -lm
+Cflags: -ID:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/include/opus

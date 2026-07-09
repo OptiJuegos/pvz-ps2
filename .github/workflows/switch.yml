@@ -1,0 +1,39 @@
+name: Switch build
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: devkitpro/devkita64:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile libopenmpt for Switch
+        shell: bash
+        run: |
+          source $DEVKITPRO/switchvars.sh
+          git clone https://github.com/OpenMPT/openmpt
+          cd openmpt
+          make CONFIG=gcc SHARED_LIB=0 DYNLINK=0 EXAMPLES=0 OPENMPT123=0 TEST=0 PREFIX=$PORTLIBS_PREFIX install 
+
+      - name: Run CMake and compile
+        shell: bash
+        run: |
+          source $DEVKITPRO/switchvars.sh
+          mkdir build
+          cd build
+          aarch64-none-elf-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O1
+          make
+
+      - name: Upload .nro artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: re-plants-vs-zombies.nro
+          path: ./build/re-plants-vs-zombies.nro
+
+      - name: Upload .elf artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: re-plants-vs-zombies.elf
+          path: ./build/re-plants-vs-zombies.elf

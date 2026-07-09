@@ -1,0 +1,16 @@
+# entries grouped with CMake are expanded by CMake
+# ${foo} entries are left alone by CMake and much
+# later are used by pkg-config.
+prefix=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports
+exec_prefix=${prefix}
+lib_suffix=
+libdir=${exec_prefix}/lib${lib_suffix}
+includedir=${prefix}/include
+
+Name: Game_Music_Emu
+Description: A video game emulation library for music.
+URL: https://bitbucket.org/mpyne/game-music-emu/wiki/Home
+Version: 0.6.4
+Cflags: -I${includedir}
+Libs: -L${libdir} -lgme
+Libs.private: -lstdc++ -lm -lgcc -lm -lc -lcdvd -lpthread -lpthreadglue -lcglue -lkernel -lgcc -lz

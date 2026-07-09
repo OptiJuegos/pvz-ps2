@@ -1,0 +1,27 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "ps2-release",
+      "displayName": "PS2 Release",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/ps2-release",
+      "toolchainFile": "${sourceDir}/psdevwindows/ps2sdk/ps2dev.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "environment": {
+        "PS2DEV": "${sourceDir}/psdevwindows",
+        "PS2SDK": "${sourceDir}/psdevwindows/ps2sdk",
+        "PATH": "${sourceDir}/psdevwindows/ee/bin;${sourceDir}/psdevwindows/iop/bin;${sourceDir}/psdevwindows/dvp/bin;${sourceDir}/psdevwindows/bin;$penv{PATH}"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "ps2-release",
+      "configurePreset": "ps2-release",
+      "configuration": "Release"
+    }
+  ]
+}

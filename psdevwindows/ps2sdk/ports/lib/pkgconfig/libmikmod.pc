@@ -1,0 +1,12 @@
+prefix=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports
+exec_prefix=${prefix}
+libdir=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/lib
+includedir=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/include
+
+Name: libmikmod
+Description: Library for playing Module Files and for Sound Effects
+Version: 3.3.13
+URL: http://mikmod.sourceforge.net/
+Libs: -L${libdir} -lmikmod
+Libs.private: 
+Cflags: -I${includedir}

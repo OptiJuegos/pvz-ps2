@@ -1,0 +1,13 @@
+prefix=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports
+exec_prefix=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports
+libdir=D:/a/ps2dev/ps2dev/ps2dev/gsKit/lib
+sharedlibdir=D:/a/ps2dev/ps2dev/ps2dev/gsKit/lib
+includedir=D:/a/ps2dev/ps2dev/ps2dev/gsKit/include
+
+Name: gsKit
+Description: gsKit graphics library for Sony Playstation 2
+Version: 0.0.0
+
+Requires: 
+Libs: -LD:/a/ps2dev/ps2dev/ps2dev/gsKit/lib -lgskit -ldmakit -lgskit_toolkit D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/lib/libjpeg.a D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/lib/liblzma.a D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/lib/libtiff.a D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/lib/libz.a D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/lib/libpng.a
+Cflags: -ID:/a/ps2dev/ps2dev/ps2dev/gsKit/include

@@ -1,0 +1,13 @@
+prefix=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: FAudio
+URL: https://github.com/FNA-XNA/FAudio
+Description: Accuracy-focused XAudio reimplementation for open platforms
+Version: 0.26.01
+Requires.private: sdl2
+
+Libs: -L${libdir} -lFAudio
+Cflags: -I${includedir} 

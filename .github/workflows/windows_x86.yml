@@ -1,0 +1,42 @@
+name: Windows x86 build
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: mingw32
+          update: true
+          pacboy: >-
+            toolchain:p
+            cmake:p
+            ninja:p
+            zlib:p
+            SDL2:p
+            glew:p
+            libopenmpt:p
+            mpg123:p
+            libvorbis:p
+            libogg:p
+            libjpeg-turbo:p
+            libpng:p
+
+      - name: Compile
+        run: |
+          cmake -G Ninja -B build
+          cmake --build build
+          cp /mingw32/bin/SDL2.dll /mingw32/bin/glew32.dll build/
+
+      - name: Upload .exe artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: re-plants-vs-zombies
+          path: ./build

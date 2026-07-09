@@ -1,0 +1,11 @@
+prefix=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports
+exec_prefix=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports
+libdir=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/lib
+includedir=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/include
+
+Name: FLAC++
+Description: Free Lossless Audio Codec Library (C++ API)
+Version: 1.5.0
+Requires: flac
+Libs: -L${libdir} -lFLAC++
+Cflags: -I${includedir}

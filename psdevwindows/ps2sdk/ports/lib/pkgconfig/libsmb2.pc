@@ -1,0 +1,14 @@
+# libsmb2 pkg-config file
+
+prefix=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports
+exec_prefix=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports
+libdir=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/lib
+includedir=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/include
+
+Name: libsmb2
+Description: libsmb2 is a client library for accessing SMB shares over a network.
+Version: 6.1.0
+Requires:
+Conflicts:
+Libs: -L${libdir} -lsmb2
+Cflags: -I${includedir}

@@ -1,0 +1,318 @@
+[   97.4030] open fd = -5
+[   97.4031] dopen name host:/E:/Juegos/re-plants-vs-zombies/build/ps2-release/. 
+[   97.4032] dopen fd = 256
+[   97.4033] open name host:/E:/Juegos/re-plants-vs-zombies/build/ps2-release/particles/BLASTMARK.jpg flag 1 data 41378
+[   97.4034] open fd = -5
+[   97.4093] dopen name host:/E:/Juegos/re-plants-vs-zombies/build/ps2-release/. 
+[   97.4095] dopen fd = 256
+[   97.4409] open name host:/E:/Juegos/re-plants-vs-zombies/build/ps2-release/particles/_BLASTMARK.tga flag 1 data 41378
+[   97.4410] open fd = -5
+[   97.4411] dopen name host:/E:/Juegos/re-plants-vs-zombies/build/ps2-release/. 
+[   97.4412] dopen fd = 256
+[   97.4470] open name host:/E:/Juegos/re-plants-vs-zombies/build/ps2-release/particles/_BLASTMARK.jpg flag 1 data 41378
+[   97.4472] open fd = -5
+[   97.4473] dopen name host:/E:/Juegos/re-plants-vs-zombies/build/ps2-release/. 
+[   97.4474] dopen fd = 256
+[   97.4474] open name host:/E:/Juegos/re-plants-vs-zombies/build/ps2-release/particles/_BLASTMARK.png flag 1 data 41378
+[   97.4475] open fd = -5
+[   97.4476] dopen name host:/E:/Juegos/re-plants-vs-zombies/build/ps2-release/. 
+[   97.4477] dopen fd = 256
+[   97.4478] open name host:/E:/Juegos/re-plants-vs-zombies/build/ps2-release/particles/_BLASTMARK.gif flag 1 data 41378
+[   97.4479] open fd = -5
+[   97.4480] dopen name host:/E:/Juegos/re-plants-vs-zombies/build/ps2-release/. 
+[   97.4481] dopen fd = 256
+[   97.4555] TLB Miss, pc=0x4ad4ec addr=0x10 [load]
+[   97.4556] TLB Miss, pc=0x4ad4ec addr=0x18 [store]
+[   97.4557] TLB Miss, pc=0x4ad4ec addr=0x10 [store]
+[   97.4558] TLB Miss, pc=0x0 addr=0x0 [load]
+[   97.4559] TLB Miss, pc=0x0 addr=0x0 [load]
+[   97.4613] TLB Miss, pc=0x0 addr=0x4 [load]
+[   97.4615] TLB Miss, pc=0x0 addr=0x8 [load]
+[   97.4616] TLB Miss, pc=0x0 addr=0xc [load]
+[   97.4617] TLB Miss, pc=0x0 addr=0x10 [load]
+[   97.4618] TLB Miss, pc=0x0 addr=0x14 [load]
+[   97.4619] TLB Miss, pc=0x0 addr=0x18 [load]
+[   97.4620] TLB Miss, pc=0x0 addr=0x1c [load]
+[   97.4621] TLB Miss, pc=0x0 addr=0x20 [load]
+[   97.4621] TLB Miss, pc=0x0 addr=0x0 [load]
+[   97.4622] TLB Miss, pc=0x0 addr=0x4 [load]
+[   97.4623] TLB Miss, pc=0x0 addr=0x8 [load]
+[   97.4624] TLB Miss, pc=0x0 addr=0xc [load]
+[   97.4624] TLB Miss, pc=0x0 addr=0x10 [load]
+[   97.4625] TLB Miss, pc=0x0 addr=0x14 [load]
+[   97.4626] TLB Miss, pc=0x0 addr=0x18 [load]
+[   97.4627] TLB Miss, pc=0x0 addr=0x1c [load]
+[   97.4628] TLB Miss, pc=0x0 addr=0x20 [load]
+[   97.4632] # Syscall: undefined (0)
+
+
+> Hola me ayudas con este PORT de PVZ a PS2? Funciona, Pero crashea al iniciar, veo que intenta cargar todos los assets    del juego al inicio. Seguro la PS2 se queda sin ram y crashea, puedes investigar?       
+
+Confirmado el mecanismo exacto: LawnApp::LoadingThreadProc (LawnApp.cpp:1735) hace toda la carga de recursos (imágenes, fuentes, trails…) en el pthread — incluido TrailLoadDefinitions en línea 1787, justo donde petó con IceTrail. En paralelo, el hilo principal renderiza el título y sondea el pad cada frame (padGetState, SIF RPC). Dos hilos en SIF RPC a la vez → corrupción → crash en _request_end.
+
+Este es el bug real de raíz, y es una carrera, no falta de RAM. Antes de tocar código, esta es una decisión de diseño tuya (afecta a la UX de carga y a cuánto código cambiar), así que déjame confirmar el enfoque:
+
+
+
+Me ayudas con este PORT de PVZ a PS2? Ahora esta todo bastante bien implementado. Solo falta lo siguiente:
+
+- Implementar un sistema de carga y descarga de Assets. La PS2 solo esta limitada a 32 MB de RAM y 4 MB de VRAM. Plantas vs zombies carga todos sus assets al inicio del juego y hace que la RAM explote. La idea es hacer un sistema el cual solo cargue los assets necesarios segun el nivel y la pantalla
+- Implementar soporte para audio .mo3 (para escuchar las canciones del menu y del juego)
+- Corregir pequeños problemas con los efectos de sonido ogg (audio repitiendose algunas veces, nada mas)
+
+------------------ USO DE RAM -----------------------------
+
+BENCHMARK:
+selectorscreen_achievements_bg.png
+
+PNG ORIGINAL:
+'images/selectorscreen_achievements_bg.png' 800x225 (0.69 MB decode) heapUsed=14.01 MB
+
+
+Refactorización completa del backend gráfico de Plants vs. Zombies para PlayStation 2
+Objetivo
+
+Refactorizar completamente el backend gráfico de la versión de PlayStation 2 de Plants vs. Zombies con dos objetivos principales:
+
+Reducir significativamente el consumo de memoria (RAM y VRAM).
+Mejorar la arquitectura del código para facilitar futuras optimizaciones específicas de PS2.
+
+Actualmente el backend funciona correctamente y ya incorpora numerosas optimizaciones, pero gran parte de ellas fueron agregadas de forma incremental durante el desarrollo del port. Como consecuencia, gran parte de la lógica terminó concentrándose dentro de gles_ps2.cpp, que hoy contiene responsabilidades muy diferentes mezcladas entre sí.
+
+El objetivo no es únicamente optimizar el rendimiento, sino transformar el backend en un diseño modular, mantenible y preparado para seguir evolucionando.
+
+Estado actual del proyecto
+
+Durante el desarrollo del port ya se implementaron numerosas optimizaciones específicas para PlayStation 2.
+
+Entre ellas:
+
+Lazy loading de imágenes.
+Decodificación bajo demanda desde los archivos PAK.
+Imágenes "stub" que sólo almacenan dimensiones hasta su primer uso.
+Sistema de purgado de imágenes entre cambios de pantalla.
+Recarga automática cuando una imagen vuelve a utilizarse.
+Arena lineal de VRAM.
+Reutilización de bloques de VRAM.
+Upload diferido de texturas.
+Eliminación del Z-buffer para recuperar VRAM.
+Corrección de múltiples bugs relacionados con gsKit.
+Corrección del bug del ALLOC_ERROR.
+Corrección del cast inválido entre ResourceManager y TodResourceManager.
+Downscale configurable para reducir presión sobre VRAM.
+Compatibilidad con renderizado ortográfico de PvZ.
+Cursor software.
+Varias correcciones del backend OpenGL para PS2.
+
+Todas estas optimizaciones funcionan, pero muchas terminaron mezcladas en el mismo archivo.
+
+Problema arquitectónico
+
+Actualmente gles_ps2.cpp contiene lógica correspondiente a prácticamente todo el renderer:
+
+gestión de texturas
+subida a VRAM
+administración del heap de VRAM
+creación de texturas
+renderizado
+batching
+shaders fijos
+conversión de formatos
+paletas
+uploads parciales
+allocator
+estados OpenGL
+helpers de conversión
+backend GS
+sincronización
+etc.
+
+El archivo se volvió excesivamente grande y complejo.
+
+Cada nueva optimización implica modificar código perteneciente a múltiples subsistemas diferentes.
+
+Esto aumenta muchísimo el riesgo de introducir regresiones.
+
+El objetivo es separar claramente responsabilidades.
+
+Refactorización propuesta
+
+La intención es dividir el backend en módulos independientes.
+
+Por ejemplo:
+
+administrador de VRAM
+administrador de texturas
+upload de texturas
+conversión de formatos
+manejo de paletas
+backend GS
+backend OpenGL
+render state
+batching
+render targets
+utilidades específicas de PS2
+
+No es obligatorio seguir exactamente esta división, pero la idea general es eliminar el enorme archivo monolítico actual.
+
+Cada módulo debería tener una responsabilidad bien definida.
+
+Refactorización del sistema de imágenes
+
+Además de reorganizar el renderer, se desea rediseñar completamente el almacenamiento interno de imágenes.
+
+Actualmente todas las imágenes terminan convertidas inmediatamente a RGBA8888.
+
+Es decir:
+
+PNG
+↓
+
+RGBA8888
+
+↓
+
+Image::mBits
+
+Lo mismo ocurre para JPEG y otros formatos.
+
+Esto implica que toda imagen consume inmediatamente 4 bytes por píxel.
+
+En una PC esto apenas importa.
+
+En una PlayStation 2 representa varios megabytes desperdiciados.
+
+Problema observado
+
+Ejemplo real:
+
+HouseofTerror20Outline.png
+
+3177 x 43
+
+PNG PALETTE 8 bits
+
+Actualmente termina ocupando aproximadamente
+
+0.52 MB
+
+únicamente porque el loader la expande completamente a RGBA8888.
+
+Sin embargo originalmente era una imagen indexada.
+
+Su representación compacta ocupa una fracción de esa memoria.
+
+Este patrón ocurre con numerosos recursos del juego.
+
+Nueva filosofía
+
+La representación interna de una imagen no debe depender del renderer.
+
+Debe depender del formato más eficiente para almacenarla.
+
+El renderer debe ser capaz de consumir distintos formatos internos.
+
+El almacenamiento y el renderizado dejan de estar acoplados.
+
+Objetivos del nuevo sistema
+
+Cada imagen debe permanecer en el formato más compacto posible.
+
+Por ejemplo:
+
+PNG indexados deben permanecer indexados.
+PNG RGB deberían mantenerse sin expandir innecesariamente.
+JPEG deberían almacenarse en una representación compacta apropiada.
+Sólo imágenes que realmente necesiten alpha completo deberían utilizar almacenamiento RGBA.
+
+La expansión a RGBA8888 debe producirse únicamente cuando sea realmente necesaria.
+
+No durante la carga.
+
+Compatibilidad
+
+Todo el motor existente debe seguir funcionando.
+
+Las APIs públicas no deberían modificarse.
+
+El resto del código debe continuar utilizando Image, MemoryImage y GLImage exactamente igual que ahora.
+
+Los cambios deben permanecer encapsulados dentro del backend gráfico.
+
+Compatibilidad con el lazy loading
+
+La nueva arquitectura debe integrarse completamente con el sistema de lazy loading ya implementado.
+
+Debe seguir siendo posible:
+
+cargar únicamente dimensiones
+decodificar bajo demanda
+purgar memoria
+volver a decodificar automáticamente
+reconstruir texturas
+mantener imágenes "pinned"
+soportar imágenes modificadas dinámicamente
+
+Toda esta lógica debe conservarse.
+
+Compatibilidad con VRAM
+
+El nuevo sistema debe seguir funcionando con:
+
+arena lineal de VRAM
+uploads diferidos
+reciclado de bloques
+flush automático al agotarse la VRAM
+recreación de texturas después de un purge
+
+No debe romper el administrador de VRAM existente.
+
+Compatibilidad con gsKit
+
+Debe mantenerse la compatibilidad con:
+
+gsKit modificado
+GSKIT_ALLOC_ERROR == 0
+renderizado ortográfico
+doble buffer
+framebuffer CT16
+texturas CT32
+backend OpenGL actual
+Objetivos de calidad del código
+
+Se prioriza una arquitectura limpia por encima de implementar soluciones rápidas.
+
+Se busca:
+
+responsabilidades bien separadas
+clases pequeñas
+módulos reutilizables
+código fácil de mantener
+menor acoplamiento
+eliminación de lógica duplicada
+nombres claros
+comentarios explicando las decisiones específicas de PS2
+Objetivo final
+
+No se busca únicamente ahorrar memoria.
+
+Se busca convertir el backend gráfico de PS2 en una implementación sólida y modular, donde cada subsistema tenga una responsabilidad clara y donde futuras optimizaciones (como PSMT8, nuevos formatos de textura, atlas, compresión, streaming de recursos o mejoras del renderer) puedan incorporarse sin seguir aumentando la complejidad de gles_ps2.cpp.
+
+El resultado esperado es un backend específicamente diseñado para las limitaciones de PlayStation 2, con una arquitectura mantenible, extensible y significativamente más eficiente tanto en RAM como en VRAM que la implementación actual.
+
+Ademas ahora el juego crashea por falta de MEMORIA y varios PNGs utilizan mucha RAM
+'images/selectorscreen_achievements_bg.png' 800x225 (0.69 MB decode) heapUsed=14.01 MB
+este PNG no tiene transparencia y utiliza 0.69MB, overkill para una PS2
+
+Tampoco quiero que analices DOWNSCALE_COUNT. No se puede hacer nada ya que el juego esta fijo en 800x600
+
+
+¡Este log lo revela TODO! La primera línea es la bomba:
+
+
+[BOOT] usb stack: none
+ps2_init_usb_mass() falló en el primer paso — cargar usbd.irx — lo que significa que el launcher (uLaunchELF/OPL) ya dejó SUS módulos USB residentes en el IOP. Nuestro usbd no puede cargarse encima, mi código abortaba ahí, y el juego lleva TODO este tiempo corriendo sobre el usbhdfsd viejo del launcher — ni el stack BDM ni siquiera nuestro usbhdfsd embebido se usaron jamás. Por eso el "cambio de driver" no cambió nada y el freeze vaga de posición. Y sobre tu teoría del buffer: fíjate que el heap iba en 7MB apenas (sin presión); el avance con el trace armado es el clásico heisenbug de timing — cada write intercalado cambia el ritmo del driver. El "buffer" que se degrada es interno del usbhdfsd viejo del launcher.
+
+La solución estándar del homebrew serio (OPL incluido): reiniciar el IOP al arrancar para barrer los módulos del launcher y cargar un set propio y limpio. Verifico cómo está el tema del PADMAN (que hoy debe estar viniendo del launcher también) e implemento:
+
+Grep "PADMAN|XPADMAN|padInit" (glob: *.{cpp,c,h})

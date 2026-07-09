@@ -1,0 +1,12 @@
+prefix=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports
+exec_prefix=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports
+libdir=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/lib
+includedir=D:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/include
+
+Name: libmodplug
+Description: The ModPlug mod file playing library.
+Version: 0.8.9.1
+Requires: 
+Libs: -LD:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/lib -lmodplug 
+Libs.private: -lstdc++ -lm
+Cflags: -ID:/a/ps2dev/ps2dev/ps2dev/ps2sdk/ports/include

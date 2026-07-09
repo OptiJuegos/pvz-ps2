@@ -1,0 +1,214 @@
+# _____     ___ ____     ___ ____
+#  ____|   |    ____|   |        | |____|
+# |     ___|   |____ ___|    ____| |    \    PS2DEV Open Source Project.
+#-----------------------------------------------------------------------
+# Copyright 2001-2004, ps2dev - http://www.ps2dev.org
+# Licenced under Academic Free License version 2.0
+# Review ps2sdk README & LICENSE files for further details.
+
+2007-08-30
+  - lukasz, added freepad
+
+2007-06-25
+  - lukasz, added freemtap
+
+2007-06-24
+  - lukasz, added freesio2, built from sio2log source
+
+2007-01-30
+  - herben, fixed libpadx
+
+2006-08-11
+  - herben, added lwip 1.1.1 and updated ps2ip to use lwip 1.1.1
+
+2006-01-28
+  - tyranid, added a working USBD supplied by Cody56
+
+2005-10-03
+  - gawd, added -pg gprof profiling (plus a sample)
+
+2005-06-12
+  - oopo, added draw library
+  - pixel, added erl feature - dynamic library
+
+2005-05-18
+  - linuzappz, added timrman stub (.h/.S at iop kernel)
+
+2005-04-28
+  - pixel and neofar, added chdir and tweaked fopen
+
+2005-04-24
+  - gawd, added audsrv
+
+2005-04-17
+  - oopo, added packet library
+
+2005-04-03
+  - tyranid, added getsyscall
+
+2005-03-20
+  - pixel, added a new bin2o in pure C
+  - oopo, added math3d library
+
+2005-03-17
+  - oopo, added dma library
+  - oopo, added simple graph library
+
+2005-02-09
+  - herben, better locking into iopcontrol to check init after reboot.
+
+2005-02-07
+  - herben, added section alignment for .ctors and .dtors sections.
+  - herben, fixed dread in iomanX.
+
+2005-02-04
+  - pixel, split the libcdvd into .o files.
+
+2005-02-01
+  - Neil Stevens, fixed samples/Makefile.eeglobal_sample's link order.
+
+2005-01-27
+  - oopo, added an install target.
+  - herben, fixed dev9's hardware registers.
+
+2005-01-20
+  - herben, added SifExitRpc to SifRebootIop
+  - drakonite, added scr_setXY, scr_getX, scr_getY and scr_clear
+
+2005-01-18
+  - herben, fixed various strncpy bugs
+
+2005-01-13
+  - pixel, added simple ctype for IOP
+  - pixel, made AHX beeing usable :)
+
+2005-01-12
+  - pixel, created alloc.irx
+
+2005-01-11
+  - pixel, renamed RFU060 and RFU061 to SetupThread and SetupHeap.
+  - pixel, introduced locking in the sdk, to fix issues with malloc.
+
+2005-01-10
+  - pixel, definitively (?) fixed xprintf's signed/unsigned printouts.
+
+2005-01-05
+  - pixel, fixed realloc's alignment bug.
+  - pixel, added timer.h
+  - kaylakaze, fixed some iop's makefiles.
+  - pixel, assert was not working nicely. fixed.
+
+2005-01-04
+  - radad, fixed pad samples.
+
+2005-01-03
+  - pixel, started a small skeleton, put a hello.irx file there.
+  - pixel, fixing printf-to-puts "gcc-optimisation" issue *AGAIN*.
+
+2005-01-02
+  - herben, added volatiles counterparts to tamtypes.h
+
+2005-01-01 Version 1.2 - new year's release.
+  - pixel, put errno var into errno.h (duh)
+  - pixel, changed write functions to use const buffers.
+
+2004-12-31
+  - oopo, moved toolchain.sh to a new ps2toolchain project.
+  - pixel, various hacks to make g++ happy when using stl objects.
+
+2004-12-29
+  - pixel, reversed and added StopModule, UnloadModule, and SearchModuleByName
+  - pixel, filling some blanks in iop's modload.h, using kernel.s stubs.
+  - pixel, added strpbrk, strspn, strcspn, strcoll and strxfrm to libc.
+  - pixel, guessed SearchModuleByAddress structure (huh... was easy...)
+
+2004-12-17
+  - radad, fixed libpad.h for some naming mistakes.
+
+2004-11-22
+  - stefan, complete support for C++ global constructors and deconstructors.
+  - pixel, fixing libkernel/libc dependancy.
+  - pixel, fixing various strncpy bugs in libkernel.
+
+2004-11-17
+  - emoon, Added stacktrace.
+
+2004-11-06
+  - myria, changed data types in tamtypes.h
+
+2004-11-01
+  - raipsu, fixed memalign.
+  - blackdroid, pixel, lots of small stdio fixes and tweaks since a few days.
+
+2004-10-29
+  - pixel, rewrote realloc, and wrote a basic memory walker. Added strdup.
+  - neovanglist, fixed xprintf's %p.
+
+2004-10-26
+  - neovanglist, added FIONREAD and FIONBIO to TCP/IP stack headers.
+
+2004-10-25
+  - pixel, fixed realloc, reported by raipsu.
+
+2004-10-19
+  - stefan, cleaned up ps2_sbrk().
+
+2004-10-08
+  - pixel, renamed config.h/c to osd_config.h/c.
+
+2004-10-05
+  - pixel, added a small assert.h.
+
+2004-10-01
+  - pixel, various stdlib tweaks and fixes.
+  - chipnat, changing qsort.c introduced by pixel to fix license problem.
+
+2004-09-21
+  - lukasz, fixed ioptrap so it has correct import/exports.
+
+2004-09-19
+  - tyranid, Added new interrupt bit to sio.h.
+  - pixel, fixing printf-to-puts "gcc-optimisation" issue.
+
+2004-09-16
+  - mrhtford, fixed SifExecModuleBuffer (bad DMA behavior).
+
+2004-09-14
+  - pixel, put and tweaked jenova0's stdlib code.
+
+2004-09-12
+  - pixel, added ioptrap, from verse.
+  - pixel, fixed setjmp/longjmp
+  - tyranid, added remote and padx
+
+2004-09-09
+  - pixel, added iop's excepman.h
+  - pixel, put and tweaked jenova0's stdio code.
+  - satanskji, adding new strcpy_sjis and strcpy_ascii.
+
+2004-09-07
+  - pixel, added sbv-lite to ps2sdk.
+  - pixel, added bin2c tool.
+
+2004-09-06
+  - pixel, Added strtoul function to ee kernel.
+
+2004-09-06 Version 1.1
+
+  - emoon, Added screen capture routines for debugging.
+  - lukasz, Added freesd.
+  - mrbrown, Fixed reference to newlib. Uses internal libc.
+  - Drakonite, Fixed file permissions in install.
+  - warren, fix C++ linker flags and order.
+  - clement, provide 48bit LBA support to ps2atad.
+  - tyranid, provide initial commit of USBD (not finished).
+  - hiryu, added libkernel to IOP for creating IOP library files.
+  - linuzapp, fixed IOP compiler detection in build.
+  - raizor, added AHX sound library to IOP.
+
+
+2004-05-02 Version 1.0Alpha
+
+   - Initial release.
+   - Brings together ps2lib, ps2drv, ps2hid, ps2ip, etc.
+

@@ -1,0 +1,288 @@
+/*
+  PSX2 OpenSource Project
+  (C)2004 lion[PS2Dev]
+  (C)2004 PS2Dev.org
+*/
+
+/**
+ * @file
+ * PS2Camera driver irx
+ */
+
+#ifndef __PS2CAM_H__
+#define __PS2CAM_H__
+
+#include <types.h>
+
+//rpc call id
+/** get irx version */
+#define PS2CAM_RPC_GETIRXVERSION	40
+/** PS2CamInit */
+#define PS2CAM_RPC_INITIALIZE		41
+/** PS2CamGetDeviceCount */
+#define PS2CAM_RPC_GETDEVCOUNT		42
+#define PS2CAM_RPC_OPENDEVICE		43
+#define PS2CAM_RPC_CLOSEDEVICE		44
+/** PS2CamGetStatus */
+#define PS2CAM_RPC_GETDEVSTATUS		45
+/** PS2CamGetInfo */
+#define PS2CAM_RPC_GETDEVINFO		46
+/** PS2CamSetDeviceBandwidth */
+#define PS2CAM_RPC_SETDEVBANDWIDTH	47
+/** PS2CamReadPacketCOMMAND */
+#define PS2CAM_RPC_READPACKET		48
+/** PS2CamSetLEDMode */
+#define PS2CAM_RPC_SETLEDMODE		49
+
+#define PS2CAM_RPC_SETDEVCONFIG		50
+
+/* camera vendor(s) */
+/** Sony */
+#define PS2CAM_VEND_SONY			0x054C 
+/** D-Link */
+#define PS2CAM_VEND_DLINK			0x05A9
+/** Logitech */
+#define PS2CAM_VEND_LOGITECH		0x0000
+
+/* product id(s) */
+/** SLEH-00030 */
+#define PS2CAM_PROD_EYETOY			0x0154
+/** SLEH-00031 */
+#define PS2CAM_PROD_EYETOY2			0x0155
+/** SLEH-000??	rinco thinks its japan */
+#define PS2CAM_PROD_EYETOY3			0x0156
+/** SLEH-000??   ,,  ,,  ,, */
+#define PS2CAM_PROD_EYETOY4			0x0157
+
+/** D-Link VisualStream DSB-C310 */
+#define PS2CAM_PROD_VISUALSTREAM	0x8519
+
+// eyetoy regs
+#define EYETOY_IREG_H_SIZE			0x10
+#define EYETOY_IREG_V_SIZE			0x11
+#define EYETOY_IREG_X_OFFSETL		0x12
+#define EYETOY_IREG_X_OFFSETH		0x13
+#define EYETOY_IREG_Y_OFFSETL		0x14
+#define EYETOY_IREG_Y_OFFSETH		0x15
+#define EYETOY_IREG_DIVIDER			0x16
+#define EYETOY_IREG_DFR				0x20
+#define EYETOY_IREG_SR				0x21
+#define EYETOY_IREG_FRAR			0x22
+#define EYETOY_IREG_FORMAT			0x25
+
+#define EYETOY_CREG_RESET0			0x50
+#define EYETOY_CREG_RESET1			0x51
+#define EYETOY_CREG_EN_CLK0			0x53
+#define EYETOY_CREG_EN_CLK1			0x54
+#define EYETOY_CREG_AUDIO_CLK		0x55
+#define EYETOY_CREG_SNAPSHOT		0x57
+#define EYETOY_CREG_PONOFF			0x58
+#define EYETOY_CREG_CAMERA_CLK		0x59
+#define EYETOY_CREG_CTRL1			0x5A
+#define EYETOY_CREG_DEB_CLK			0x5B
+#define EYETOY_CREG_CLK				0x5C
+#define EYETOY_CREG_PWDN			0x5D
+#define EYETOY_CREG_USR_DFN			0x5E
+#define EYETOY_CREG_CTRL2			0x5F
+#define EYETOY_CREG_INTERRUPT0		0x60
+#define EYETOY_CREG_INTERRUPT1		0x61
+#define EYETOY_CREG_MASK0			0x62
+#define EYETOY_CREG_MASK1			0x63
+#define EYETOY_CREG_VCI_R0			0x64
+#define EYETOY_CREG_VCI_R1			0x65
+#define EYETOY_CREG_ADC_CTRL		0x68
+#define EYETOY_CREG_UC_CTRL			0x6D
+
+/* these reg control extra pins on chip(eg:red led) */
+#define EYETOY_GPIO_DATA_OUT0		0x71
+#define EYETOY_GPIO_IO_CTRL0		0x72
+
+//alternate settins(select butter size)
+/** xfer disable */
+#define EYETOY_ALTERNATE_SIZE_0		0x00
+#define EYETOY_ALTERNATE_SIZE_384	0x01
+#define EYETOY_ALTERNATE_SIZE_512	0x02
+#define EYETOY_ALTERNATE_SIZE_768	0x03
+#define EYETOY_ALTERNATE_SIZE_896	0x04
+
+// device status
+/** device not connected */
+#define CAM_STATUS_NOTCONNECTED		0
+/** connected but initializing */
+#define CAM_STATUS_CONNECTED		1
+/** connect & ready for commands */
+#define CAM_STATUS_CONNECTEDREADY	2
+
+// used with PS2CAM_DEVICE_CONFIG->mask
+#define CAM_CONFIG_MASK_DIMENSION	0x00000001
+#define CAM_CONFIG_MASK_OFFSET		0x00000002
+#define CAM_CONFIG_MASK_DIVIDER		0x00000004
+#define CAM_CONFIG_MASK_FRAMERATE	0x00000008
+
+// error codes
+/** ok */
+#define CAM_ERROR_NONE				 (00)
+#define CAM_ERROR_NOTINIT			-(20)
+#define CAM_ERROR_INVALIDDEVICE		-(21)
+ /** unknown command */
+#define CAM_ERROR_COMMUNKNOWN		-(22)
+/** device not ready */
+#define CAM_ERROR_DEVNOTREADY		-(23)
+/** no compatible device connected */
+#define CAM_ERROR_NODEVICE			-(24)
+/** a value was out of range */
+#define CAM_ERROR_BADRANGE			-(25)
+/** unknown error */
+#define CAM_ERROR_UNKNOWN			-(26)
+/** out of free device handle(s) */
+#define CAM_ERROR_MAXHANDLE			-(27)
+/** invalid device handle */
+#define CAM_ERROR_BADHANDLE			-(28)
+/** device was removed */
+#define CAM_ERROR_DISCONNECTED		-(29)
+
+typedef struct
+{
+	/** sizeof this struct */
+	unsigned int	ssize;
+	unsigned short	vendor_id;
+	unsigned short	product_id;
+	unsigned char	vendor_name[32];
+	unsigned char	product_name[32];
+	unsigned char	model[16];
+}PS2CAM_DEVICE_INFO;
+
+typedef struct
+{
+	int			device_id;
+	int			config_id;
+	int			status;
+	int			bandwidth;
+	int			stream_pocket_size;
+
+	/** controll endpoint */
+	int			controll;
+	/** stream   endpoint */
+	int			stream;
+
+	/** info extracted from callback */
+	int			result;
+	int			bytes;
+	void		*arg;
+}CAMERA_DEVICE;
+
+typedef struct
+{
+	int				fd;
+	int				status;
+	CAMERA_DEVICE	*cam;
+}PS2CAM_DEVICE_HANDLE;
+
+typedef struct
+{
+	/** structure size */
+	unsigned int	ssize;
+	unsigned int	mask;
+	/** camera horizontal resolution */
+	unsigned short	width;
+	/** camera vertical   resolution */
+	unsigned short	height;
+	/** x offset of camera image */
+	unsigned short	x_offset;
+	/** y offset of camera image */
+	unsigned short	y_offset;
+	/** Horizontal Divider */
+	unsigned char	h_divider;
+	/** Vertical Divider */
+	unsigned char	v_divider;
+	/** framerate */
+	unsigned short	framerate;
+
+}PS2CAM_DEVICE_CONFIG;
+
+typedef struct
+{
+	/** 0x01 */
+	unsigned char	magic1;
+	/** 0xff */
+	unsigned char	magic2;
+	/** 0xff */
+	unsigned char	magic3;
+	/** 0x51:EOF     0x50:SOF */
+	unsigned char	type;
+	unsigned char	uk1;
+	unsigned char	uk2;
+	unsigned char	uk3;
+	unsigned char	uk4;
+	unsigned char	uk5;
+	/** 0x01:framehead+no data, 0x00:framehead+data */
+	unsigned char	frame;
+	unsigned char	uk6;
+	unsigned char	uk7;
+	unsigned char	uk8;
+	unsigned char	uk9;
+	/** file size Lo byte (only in EOF) */
+	unsigned char	Lo;
+	/** file size Hi byte (only in EOF) */
+	unsigned char	Hi;
+}EYETOY_FRAME_HEAD;
+
+#define camSetDIVIDER(p, hdiv, en_lpf, vdiv, en_sa)		 setReg8((p), EYETOY_IREG_DIVIDER,	 \
+															((unsigned char)(hdiv)		<<0)|\
+															((unsigned char)(en_lpf)	<<3)|\
+															((unsigned char)(vdiv)		<<4)|\
+															((unsigned char)(en_sa)		<<7));
+
+extern void rpcMainThread(void* param);
+extern void *rpcCommandHandler(u32 command, void *buffer, int size);
+
+// usbd.irx calls
+extern int  PS2CamInitDriver();
+extern int  PS2CamProbe(int devId);
+extern int  PS2CamConnect(int devId);
+extern int  PS2CamDisconnect(int devId);
+extern void PS2CamGetDeviceSring(CAMERA_DEVICE* dev, int index, char *str, int strmax);
+
+//private funtions
+extern void PS2CamCallback(int resultCode, int bytes, void *arg);
+extern void PS2CamSetDeviceConfiguration(CAMERA_DEVICE *dev,int id);
+extern void PS2CamInitializeNewDevice(CAMERA_DEVICE *argv);
+extern void PS2CamSetDeviceDefaults(CAMERA_DEVICE *dev);
+extern int PS2CamGetIRXVersion(void);
+extern int PS2CamInit(int mode);
+extern int PS2CamGetDeviceCount(void);
+extern int PS2CamOpenDevice(int device_index);
+extern int PS2CamCloseDevice(int handle);
+extern int PS2CamGetDeviceInfo(int handle,int *info);
+
+// low level camera funtions
+extern int  setReg8(CAMERA_DEVICE    *dev, unsigned char reg_id, unsigned char  value);
+extern int  getReg8(CAMERA_DEVICE    *dev, unsigned char reg_id, unsigned char *value);
+extern int  setReg8Mask(CAMERA_DEVICE  *dev, unsigned char reg_id, unsigned char  value,unsigned char mask);
+extern int  setReg16(CAMERA_DEVICE   *dev, unsigned char reg_id, unsigned short value);
+extern int  PS2CamSelectInterface(CAMERA_DEVICE* dev, int interface, int altSetting);
+
+extern void camResetDevice(CAMERA_DEVICE *dev);
+extern void camEnableAutoLaunch(CAMERA_DEVICE *dev);
+extern void camDisableAutoLaunch(CAMERA_DEVICE *dev);
+extern void camClearSnapButton(CAMERA_DEVICE *dev);
+extern int  camCheckAutoLaunch(CAMERA_DEVICE *dev);
+extern void camEnableSystem(CAMERA_DEVICE *dev);
+extern void camDisableSystem(CAMERA_DEVICE *dev);
+extern void camResetUsb(CAMERA_DEVICE *dev);
+extern void camSetUsbInit(CAMERA_DEVICE *dev);
+extern void camSetUsbWork(CAMERA_DEVICE *dev);
+extern void camTurnOnRedLed(CAMERA_DEVICE *dev);
+extern void camTurnOffRedLed(CAMERA_DEVICE *dev);
+extern void camBlockStream(CAMERA_DEVICE *dev);
+extern void camStartStream(CAMERA_DEVICE *dev);
+extern void camStopStream(CAMERA_DEVICE *dev);
+
+// PS2Cam rpc/export funtions
+extern int PS2CamReadPacket(int device_id);
+extern int PS2CamGetDeviceStatus(int device_id);
+extern int PS2CamSetDeviceBandwidth(int device_id, char bandwidth);
+extern int PS2CamSetLEDMode(int device_id, int mode);
+extern int PS2CamSetDeviceConfig(int handle, void *config);
+
+#endif /* __PS2CAM_H__ */
