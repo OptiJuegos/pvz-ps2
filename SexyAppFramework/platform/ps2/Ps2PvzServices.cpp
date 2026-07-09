@@ -44,7 +44,6 @@ extern const unsigned int  cdfs_irx_size;
 // (BDM's mass:) are reachable. The hook symbol lives in libfileXio.a but has
 // no public header.
 int fileXioInit(void);
-int _ps2sdk_fileXio_init(void);
 }
 
 static std::string s_savePrefix;
@@ -113,7 +112,6 @@ static bool ps2_init_usb_mass(bool theHostFs)
             && ps2_load_embedded_module("fileXio.irx", fileXio_irx, fileXio_irx_size))
         {
             fileXioInit();
-            _ps2sdk_fileXio_init(); // newlib open/mkdir/dopen -> fileXio/iomanX
 
             if (ps2_load_embedded_module("bdm.irx", bdm_irx, bdm_irx_size)
                 && ps2_load_embedded_module("bdmfs_fatfs.irx", bdmfs_fatfs_irx, bdmfs_fatfs_irx_size)
