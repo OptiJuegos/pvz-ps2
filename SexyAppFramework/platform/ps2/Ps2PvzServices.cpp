@@ -237,8 +237,10 @@ void Ps2PvzInitServices(const char* theArgv0)
     // the memory card / USB.
     bool aCdBoot = theArgv0 != NULL && strncmp(theArgv0, "cdrom", 5) == 0;
 
-    if (!aHostFs)
+    if (!aHostFs) {
         ps2_reboot_iop_clean();
+        sbv_patch_fileio();
+    }
 
     SifLoadFileInit();
     SifInitIopHeap(); // SifExecModuleBuffer stages embedded modules in IOP RAM
